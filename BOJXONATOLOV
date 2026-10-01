@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bojxona Sovg'asini Rasmiylashtirish - To'lov Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes shine {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(212,175,55,0.4)); }
+            50% { filter: drop-shadow(0 0 35px rgba(255,223,0,0.8)); }
+        }
+
+        .gold-text {
+            background: linear-gradient(135deg, #FFF5C0 0%, #D4AF37 40%, #FFFFFF 50%, #B38728 60%, #AA7C11 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        .gold-card {
+            background: rgba(12, 12, 12, 0.92);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95), inset 0 0 15px rgba(212, 175, 55, 0.08);
+        }
+
+        .gold-button {
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 30%, #B38728 70%, #AA7C11 100%);
+            color: #000;
+            font-weight: 800;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .gold-button:active {
+            transform: scale(0.96);
+        }
+
+        .toast-popup {
+            animation: fadeInOut 2.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-sans antialiased h-screen flex flex-col items-center justify-center overflow-hidden relative selection:bg-yellow-500 selection:text-black">
+
+    <!-- BACKGROUND CANVAS (GOLD DUST) -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 1. SPLASH SCREEN (COUNTDOWN 5-4-3-2-1) -->
+    <div id="splash-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-700 p-4">
+        <div class="text-center p-8 gold-card rounded-3xl max-w-sm w-full relative z-10">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-full border-2 border-yellow-500/60 flex items-center justify-center bg-yellow-500/10 shadow-2xl shadow-yellow-500/40">
+                <i class="fa-solid fa-box-open text-4xl gold-text"></i>
+            </div>
+            <h1 class="text-xl font-black tracking-wide gold-text mb-2 uppercase">Bojxona Sovg'asini Rasmiylashtirish Uchun To'lovlar</h1>
+            <p class="text-xs text-yellow-200/80 uppercase tracking-widest mb-6">Tizim tayyorlanmoqda...</p>
+            
+            <!-- COUNTDOWN TIMER DISPLAY -->
+            <div class="text-6xl font-black gold-text my-4 font-mono" id="countdown-num">5</div>
+
+            <div class="w-full bg-neutral-900 h-2.5 rounded-full overflow-hidden border border-yellow-500/30 mt-4">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-yellow-600 via-yellow-200 to-yellow-500 w-0 transition-all duration-100 ease-linear"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN PAYMENT INTERFACE -->
+    <div id="main-content" class="hidden relative z-10 w-full max-w-md p-4">
+        <div class="gold-card p-6 rounded-3xl text-center space-y-6">
+            
+            <div class="w-16 h-16 mx-auto rounded-full border border-yellow-500/40 flex items-center justify-center bg-yellow-500/10">
+                <i class="fa-solid fa-file-invoice-dollar text-3xl gold-text"></i>
+            </div>
+
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-gray-400 font-bold mb-1">Davlat Boji</h2>
+                <div class="text-3xl font-black gold-text">150 000 SO'M</div>
+                <p class="text-xs text-yellow-500/80 mt-1 font-medium">Bojxona rasmiylashtiruvi to'lovi</p>
+            </div>
+
+            <!-- CARD DETAILS CONTAINER (CLICKABLE TO COPY) -->
+            <div onclick="copyCardNumber()" class="cursor-pointer bg-black/80 border border-yellow-500/50 hover:border-yellow-400 p-4 rounded-2xl transition-all duration-200 relative group shadow-lg active:scale-95">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[11px] font-bold tracking-wider text-yellow-400/90 uppercase">UZCARD (AGROBANK)</span>
+                    <span class="text-[11px] text-gray-400 group-hover:text-yellow-300 transition-colors">
+                        <i class="fa-regular fa-copy mr-1"></i>Nusxalash
+                    </span>
+                </div>
+
+                <div class="text-xl sm:text-2xl font-mono font-bold tracking-widest text-white my-2" id="card-number">
+                    5614 6848 0855 2572
+                </div>
+
+                <div class="text-xs text-gray-300 font-medium text-left border-t border-neutral-800 pt-2 mt-2 flex justify-between items-center">
+                    <span class="text-gray-400">Qabul qiluvchi:</span>
+                    <span class="font-bold text-yellow-200">QOBILJONOV X</span>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTON -->
+            <button onclick="confirmPayment()" class="gold-button w-full py-4 rounded-2xl text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-circle-check"></i> TO'LOV QILDIM
+            </button>
+
+            <!-- TELEGRAM OPERATOR NOTICE (HIDDEN UNTIL CLICKED) -->
+            <div id="receipt-notice" class="hidden p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/40 text-yellow-200 text-sm font-semibold animate-bounce">
+                <i class="fa-solid fa-paper-plane mr-2 text-yellow-400"></i>
+                Sizga yozgan operatorga chekini yuboring!
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION FOR COPY -->
+    <div id="toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-5 py-2.5 rounded-full font-bold text-xs shadow-2xl z-50 flex items-center gap-2">
+        <i class="fa-solid fa-check-circle"></i> Karta raqami nusxalandi!
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. CANVAS PARTICLES
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.7 + 0.3;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 2. 5-4-3-2-1 COUNTDOWN & TRANSITION
+        let timeLeft = 5;
+        const countdownEl = document.getElementById('countdown-num');
+        const progressBar = document.getElementById('progress-bar');
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+
+        const timer = setInterval(() => {
+            timeLeft -= 1;
+            if (timeLeft >= 1) {
+                countdownEl.innerText = timeLeft;
+                progressBar.style.width = ((5 - timeLeft) * 20) + '%';
+            } else {
+                progressBar.style.width = '100%';
+                clearInterval(timer);
+                
+                // HIDE SPLASH & SHOW MAIN CONTENT
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.classList.add('hidden');
+                    mainContent.classList.remove('hidden');
+                }, 700);
+            }
+        }, 1000);
+
+        // 3. COPY CARD NUMBER FUNCTION
+        function copyCardNumber() {
+            const rawCardNumber = "5614684808552572";
+            navigator.clipboard.writeText(rawCardNumber).then(() => {
+                showToast();
+            }).catch(() => {
+                // Fallback for older browsers
+                const tempInput = document.createElement("input");
+                tempInput.value = rawCardNumber;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-popup');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-popup');
+            }, 2500);
+        }
+
+        // 4. CONFIRM PAYMENT BUTTON ACTION
+        function confirmPayment() {
+            const notice = document.getElementById('receipt-notice');
+            notice.classList.remove('hidden');
+            notice.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
