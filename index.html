@@ -8,8 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @keyframes pulseGlow {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.03); }
+            0%, 100% { opacity: 0.8; transform: scale(1); filter: drop-shadow(0 0 15px rgba(212,175,55,0.3)); }
+            50% { opacity: 1; transform: scale(1.02); filter: drop-shadow(0 0 25px rgba(212,175,55,0.6)); }
+        }
+        @keyframes floatAnim {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .gold-gradient-bg {
             background: radial-gradient(circle at center, #2a2010 0%, #0a0a0a 100%);
@@ -20,295 +28,67 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .gold-card {
+            background: rgba(20, 20, 20, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.05);
+        }
         .gold-button {
             background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA7C11 100%);
             color: #000;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
         }
         .gold-button:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
+        }
+        .animate-card {
+            animation: slideInUp 0.5s ease-out forwards;
+        }
+        .float-element {
+            animation: floatAnim 4s ease-in-out infinite;
         }
     </style>
 </head>
 <body class="bg-black text-white font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-yellow-500 selection:text-black">
 
-    <!-- 1. SPLASH SCREEN (5 Soniya) -->
+    <!-- 1. ANIMATION SPLASH SCREEN (4 Soniya) -->
     <div id="splash-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center gold-gradient-bg transition-opacity duration-1000">
-        <div class="text-center p-6 border-2 border-yellow-500/30 rounded-2xl bg-black/60 backdrop-blur-md shadow-2xl max-w-xs w-full mx-4">
-            <h1 class="text-4xl font-extrabold tracking-widest gold-text mb-2">QXV BRAND</h1>
-            <p class="text-xs tracking-widest text-yellow-200/80 uppercase mb-6">Qarz Daftarchasi</p>
-            <div class="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <p class="text-sm font-medium text-yellow-100 tracking-wider animate-pulse">XUSH KELIBSIZ</p>
+        <div class="text-center p-8 gold-card rounded-3xl max-w-xs w-full mx-4 float-element">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full border-2 border-yellow-500/50 flex items-center justify-center bg-yellow-500/10 shadow-lg shadow-yellow-500/20">
+                <i class="fa-solid fa-wallet text-2xl gold-text"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-widest gold-text mb-1">QXV BRAND</h1>
+            <p class="text-[10px] tracking-widest text-yellow-200/80 uppercase mb-6">Premium Qarz Daftari</p>
+            <div class="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-xs font-medium text-yellow-100 tracking-wider animate-pulse">YUKLANMOQDA...</p>
         </div>
     </div>
 
-    <!-- 2. AUTH SCREEN (KIRISH & RO'YXATDAN O'TISH) -->
-    <div id="auth-screen" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/95 p-4">
-        <div class="w-full max-w-sm bg-neutral-900 border border-yellow-500/40 rounded-2xl p-6 shadow-2xl">
-            <h2 class="text-2xl font-bold text-center gold-text mb-1">QXV BRAND</h2>
-            <p id="auth-subtitle" class="text-xs text-center text-gray-400 mb-6">Tizimga kirish</p>
+    <!-- 2. AUTHENTICATION SCREEN (TELEFON & PAROL) -->
+    <div id="auth-screen" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md">
+        <div class="w-full max-w-sm gold-card rounded-3xl p-6 shadow-2xl animate-card">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold gold-text">QXV BRAND</h2>
+                <p id="auth-subtitle" class="text-xs text-gray-400 mt-1">Tizimga kiring yoki ro'yxatdan o'ting</p>
+            </div>
 
             <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-yellow-400 mb-1">LOGIN</label>
-                    <input type="text" id="auth-username" required placeholder="Loginingizni kiriting" class="w-full bg-black border border-neutral-700 rounded-lg p-3 text-white focus:border-yellow-500 focus:outline-none text-sm">
+                    <label class="block text-xs font-semibold text-yellow-400 mb-1">TELEFON RAQAM</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-gray-400 text-sm"><i class="fa-solid fa-phone"></i></span>
+                        <input type="tel" id="auth-phone" required placeholder="+998 90 123 45 67" class="w-full bg-black/60 border border-neutral-700 rounded-xl p-3 pl-10 text-white focus:border-yellow-500 focus:outline-none text-sm transition-all">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-yellow-400 mb-1">PAROL</label>
                     <div class="relative">
-                        <input type="password" id="auth-password" required placeholder="Parolingizni kiriting" class="w-full bg-black border border-neutral-700 rounded-lg p-3 pr-10 text-white focus:border-yellow-500 focus:outline-none text-sm">
-                        <button type="button" onclick="togglePassVisibility()" class="absolute right-3 top-3 text-gray-400 hover:text-yellow-400">
-                            <i id="pass-icon" class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
+                        <span class="absolute"Qil" o‘zbek tilida holatga qarab bir nechta ma'noni anglatadi:
 
-                <div class="flex items-center justify-between text-xs">
-                    <label class="flex items-center text-gray-300 cursor-pointer">
-                        <input type="checkbox" id="remember-me" checked class="accent-yellow-500 mr-2 rounded"> Eslab qolsin
-                    </label>
-                    <button type="button" onclick="recoverAccount()" class="text-yellow-500 hover:underline">Parolni unutdingizmi?</button>
-                </div>
+1. **Buyruq fe'li (qilmoq):** Biror ishni bajar, amalga oshir ("Ishu-amalni qil").
+2. **Ot (qil):** Ot yoki boshqa hayvonlarning yolidan, dumidan chiqqan ingichka, qattiq soch/tuk (masalan, "qil ko'prik").
 
-                <p id="auth-error" class="text-xs text-red-500 hidden text-center"></p>
-
-                <button type="submit" id="auth-submit-btn" class="w-full gold-button py-3 rounded-lg font-bold tracking-wider text-sm mt-2">KIRISH</button>
-            </form>
-
-            <div class="mt-4 pt-4 border-t border-neutral-800 text-center">
-                <button type="button" onclick="toggleAuthMode()" id="toggle-auth-btn" class="text-xs text-gray-400 hover:text-white">
-                    Hisobingiz yo'qmi? <span class="text-yellow-400 font-bold">Ro'yxatdan o'ting</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN APP CONTENT -->
-    <div id="app-content" class="hidden flex-1 flex flex-col max-w-md w-full mx-auto p-4 pb-20">
-        
-        <!-- HEADER -->
-        <header class="flex justify-between items-center py-4 border-b border-yellow-500/20 mb-6">
-            <div>
-                <h1 class="text-xl font-bold gold-text">QXV BRAND</h1>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Qarz Daftarchasi</p>
-            </div>
-            <button onclick="logout()" class="text-xs text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg hover:bg-red-500/10">
-                <i class="fa-solid fa-right-from-bracket mr-1"></i>Chiqish
-            </button>
-        </header>
-
-        <!-- DASHBOARD (BALANS) -->
-        <div class="bg-neutral-900 border border-yellow-500/30 rounded-2xl p-5 mb-6 text-center shadow-lg relative overflow-hidden">
-            <p class="text-xs text-gray-400 mb-1 tracking-wider uppercase">Umumiy Qarz Summasi</p>
-            <h2 id="total-amount" class="text-3xl font-extrabold gold-text tracking-tight">0 so'm</h2>
-        </div>
-
-        <!-- FORM: YANGI QARZ QO'SHISH -->
-        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 mb-6 shadow-md">
-            <h3 class="text-sm font-semibold text-yellow-400 mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-plus-circle"></i> Yangi qarz yozish
-            </h3>
-            <form id="debt-form" onsubmit="addDebt(event)" class="space-y-3">
-                <input type="text" id="debtor-name" required placeholder="Ism / Mijoz nomi" class="w-full bg-black border border-neutral-700 rounded-lg p-2.5 text-xs text-white focus:border-yellow-500 focus:outline-none">
-                <input type="number" id="debt-amount" required placeholder="Summa (so'mda)" class="w-full bg-black border border-neutral-700 rounded-lg p-2.5 text-xs text-white focus:border-yellow-500 focus:outline-none">
-                <input type="text" id="debt-note" placeholder="Izoh (ixtiyoriy)" class="w-full bg-black border border-neutral-700 rounded-lg p-2.5 text-xs text-white focus:border-yellow-500 focus:outline-none">
-                <button type="submit" class="w-full gold-button py-2.5 rounded-lg font-bold text-xs tracking-wider uppercase">Saqlash</button>
-            </form>
-        </div>
-
-        <!-- LIST: QARZLAR RO'YXATI -->
-        <div class="flex-1">
-            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Qarzdorlar Ro'yxati</h3>
-            <div id="debt-list" class="space-y-3"></div>
-            <div id="empty-msg" class="text-center py-8 text-gray-600 text-xs">Hozircha hech qanday qarz yo'q.</div>
-        </div>
-
-        <!-- FOOTER / TELEGRAM -->
-        <footer class="mt-8 text-center border-t border-neutral-800 pt-4">
-            <a href="https://t.me/QXVbrand" target="_blank" class="inline-flex items-center gap-2 text-xs text-yellow-400 hover:text-yellow-300 transition-colors">
-                <i class="fa-brands fa-telegram text-base"></i> @QXVbrand Telegram Kanal
-            </a>
-        </footer>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        let debts = JSON.parse(localStorage.getItem('qxv_debts')) || [];
-        let authData = JSON.parse(localStorage.getItem('qxv_auth')) || null;
-        let isAutoLogin = localStorage.getItem('qxv_remember') === 'true';
-        let isRegisterMode = !authData; // Agar akkaunt bo'lmasa ro'yxatdan o'tish rejimida ochiladi
-
-        // 1. Splash Screen
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.classList.add('hidden');
-                initApp();
-            }, 1000);
-        }, 4000);
-
-        function initApp() {
-            if (authData && isAutoLogin) {
-                document.getElementById('app-content').classList.remove('hidden');
-                renderDebts();
-            } else {
-                showAuthScreen();
-            }
-        }
-
-        function showAuthScreen() {
-            document.getElementById('auth-screen').classList.remove('hidden');
-            updateAuthUI();
-        }
-
-        function updateAuthUI() {
-            const subtitle = document.getElementById('auth-subtitle');
-            const submitBtn = document.getElementById('auth-submit-btn');
-            const toggleBtn = document.getElementById('toggle-auth-btn');
-
-            if (isRegisterMode) {
-                subtitle.innerText = "Yangi hisob yaratish (Ro'yxatdan o'tish)";
-                submitBtn.innerText = "RO'YXATDAN O'TISH";
-                toggleBtn.innerHTML = "Hisobingiz bormi? <span class='text-yellow-400 font-bold'>Kirish</span>";
-            } else {
-                subtitle.innerText = "Tizimga kirish";
-                submitBtn.innerText = "KIRISH";
-                toggleBtn.innerHTML = "Hisobingiz yo'qmi? <span class='text-yellow-400 font-bold'>Ro'yxatdan o'ting</span>";
-            }
-        }
-
-        function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('auth-error').classList.add('hidden');
-            updateAuthUI();
-        }
-
-        function togglePassVisibility() {
-            const passInput = document.getElementById('auth-password');
-            const passIcon = document.getElementById('pass-icon');
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                passIcon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                passInput.type = 'password';
-                passIcon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        }
-
-        function handleAuth(e) {
-            e.preventDefault();
-            const user = document.getElementById('auth-username').value.trim();
-            const pass = document.getElementById('auth-password').value.trim();
-            const remember = document.getElementById('remember-me').checked;
-            const errorEl = document.getElementById('auth-error');
-
-            if (isRegisterMode) {
-                // Ro'yxatdan o'tish
-                authData = { username: user, password: pass };
-                localStorage.setItem('qxv_auth', JSON.stringify(authData));
-                localStorage.setItem('qxv_remember', remember);
-                loginSuccess();
-            } else {
-                // Kirish
-                if (authData && authData.username === user && authData.password === pass) {
-                    localStorage.setItem('qxv_remember', remember);
-                    loginSuccess();
-                } else {
-                    errorEl.innerText = "Login yoki parol xato!";
-                    errorEl.classList.remove('hidden');
-                }
-            }
-        }
-
-        function loginSuccess() {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-content').classList.remove('hidden');
-            renderDebts();
-        }
-
-        function recoverAccount() {
-            if (authData) {
-                alert(`Sizning ma'lumotlaringiz:\n\nLogin: ${authData.username}\nParol: ${authData.password}`);
-            } else {
-                alert("Hali hech qanday hisob ro'yxatdan o'tkazilmagan. Avval ro'yxatdan o'ting!");
-            }
-        }
-
-        function logout() {
-            localStorage.setItem('qxv_remember', 'false');
-            document.getElementById('app-content').classList.add('hidden');
-            isRegisterMode = false;
-            showAuthScreen();
-        }
-
-        function addDebt(e) {
-            e.preventDefault();
-            const name = document.getElementById('debtor-name').value.trim();
-            const amount = parseFloat(document.getElementById('debt-amount').value);
-            const note = document.getElementById('debt-note').value.trim();
-
-            if (name && amount) {
-                const newDebt = {
-                    id: Date.now(),
-                    name: name,
-                    amount: amount,
-                    note: note || 'Izohsiz',
-                    date: new Date().toLocaleDateString('uz-UZ')
-                };
-                debts.push(newDebt);
-                saveAndRender();
-                document.getElementById('debt-form').reset();
-            }
-        }
-
-        function deleteDebt(id) {
-            if (confirm("Ushbu qarzni o'chirmoqchimisiz?")) {
-                debts = debts.filter(item => item.id !== id);
-                saveAndRender();
-            }
-        }
-
-        function saveAndRender() {
-            localStorage.setItem('qxv_debts', JSON.stringify(debts));
-            renderDebts();
-        }
-
-        function renderDebts() {
-            const listEl = document.getElementById('debt-list');
-            const emptyMsg = document.getElementById('empty-msg');
-            const totalEl = document.getElementById('total-amount');
-
-            listEl.innerHTML = '';
-            let total = 0;
-
-            if (debts.length === 0) {
-                emptyMsg.classList.remove('hidden');
-            } else {
-                emptyMsg.classList.add('hidden');
-                debts.forEach(debt => {
-                    total += debt.amount;
-                    const card = document.createElement('div');
-                    card.className = "bg-neutral-900 border border-neutral-800 rounded-xl p-3.5 flex justify-between items-center shadow-sm";
-                    card.innerHTML = `
-                        <div>
-                            <h4 class="font-bold text-sm text-white">${debt.name}</h4>
-                            <p class="text-[11px] text-gray-400">${debt.note} • <span class="text-neutral-500">${debt.date}</span></p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-semibold text-sm text-yellow-400">${debt.amount.toLocaleString()} so'm</span>
-                            <button onclick="deleteDebt(${debt.id})" class="text-gray-500 hover:text-red-400 transition-colors p-1">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    `;
-                    listEl.appendChild(card);
-                });
-            }
-
-            totalEl.innerText = total.toLocaleString() + " so'm";
-        }
-    </script>
-</body>
-</html>
+Nima qilishimni xohlaysiz? Qanday yordam bera olaman?
