@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QXVbrand - Smart Platform</title>
+    <title>Bojxona Sovg'asini Rasmiylashtirish - To'lov Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -22,7 +22,7 @@
             100% { background-position: 200% center; }
         }
 
-        @keyframes goldGlow {
+        @keyframes pulseGlow {
             0%, 100% { filter: drop-shadow(0 0 15px rgba(212,175,55,0.4)); }
             50% { filter: drop-shadow(0 0 35px rgba(255,223,0,0.8)); }
         }
@@ -54,92 +54,202 @@
             transform: scale(0.96);
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
+        .toast-popup {
+            animation: fadeInOut 2.5s ease-in-out forwards;
         }
-        ::-webkit-scrollbar-track {
-            background: #050505;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #D4AF37, #AA7C11);
-            border-radius: 10px;
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
         }
     </style>
 </head>
-<body class="bg-black text-white font-sans antialiased h-screen flex flex-col justify-between overflow-hidden relative selection:bg-yellow-500 selection:text-black">
+<body class="bg-black text-white font-sans antialiased h-screen flex flex-col items-center justify-center overflow-hidden relative selection:bg-yellow-500 selection:text-black">
 
-    <!-- CANVAS BACKGROUND (GOLD DUST & RAIN) -->
+    <!-- BACKGROUND CANVAS (GOLD DUST) -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- 1. SPLASH SCREEN (EXACTLY 5 SECONDS COUNTDOWN) -->
-    <div id="splash-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-700">
-        <div class="text-center p-8 gold-card rounded-3xl max-w-sm w-full mx-4 relative z-10">
-            <div class="w-24 h-24 mx-auto mb-5 rounded-full border-2 border-yellow-500/60 flex items-center justify-center bg-yellow-500/10 shadow-2xl shadow-yellow-500/40">
-                <i class="fa-solid fa-crown text-5xl gold-text"></i>
+    <!-- 1. SPLASH SCREEN (COUNTDOWN 5-4-3-2-1) -->
+    <div id="splash-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-700 p-4">
+        <div class="text-center p-8 gold-card rounded-3xl max-w-sm w-full relative z-10">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-full border-2 border-yellow-500/60 flex items-center justify-center bg-yellow-500/10 shadow-2xl shadow-yellow-500/40">
+                <i class="fa-solid fa-box-open text-4xl gold-text"></i>
             </div>
-            <h1 class="text-3xl font-black tracking-widest gold-text mb-2">QXVbrand</h1>
-            <p class="text-[11px] text-yellow-200/80 uppercase tracking-widest mb-6">SUN'IY INTELLEKT PLATFORMASI</p>
+            <h1 class="text-xl font-black tracking-wide gold-text mb-2 uppercase">Bojxona Sovg'asini Rasmiylashtirish Uchun To'lovlar</h1>
+            <p class="text-xs text-yellow-200/80 uppercase tracking-widest mb-6">Tizim tayyorlanmoqda...</p>
             
-            <!-- 5 SECONDS PROGRESS COUNTER -->
-            <div class="w-full bg-neutral-900 h-2.5 rounded-full overflow-hidden border border-yellow-500/30 mb-3">
+            <!-- COUNTDOWN TIMER DISPLAY -->
+            <div class="text-6xl font-black gold-text my-4 font-mono" id="countdown-num">5</div>
+
+            <div class="w-full bg-neutral-900 h-2.5 rounded-full overflow-hidden border border-yellow-500/30 mt-4">
                 <div id="progress-bar" class="h-full bg-gradient-to-r from-yellow-600 via-yellow-200 to-yellow-500 w-0 transition-all duration-100 ease-linear"></div>
             </div>
-            <p class="text-xs text-gray-400 font-mono"><span id="countdown-num">5.0</span> soniya... Yuklanmoqda (<span id="percent-num">0%</span>)</p>
         </div>
     </div>
 
-    <!-- 2. LOGIN MODAL (TELEFON RAQAM) -->
-    <div id="login-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/95 p-4">
-        <div class="gold-card p-6 rounded-3xl max-w-sm w-full text-center relative z-10">
-            <i class="fa-solid fa-mobile-screen-button text-4xl gold-text mb-3"></i>
-            <h2 class="text-xl font-bold gold-text mb-1">QXVbrand Tizimi</h2>
-            <p class="text-xs text-gray-400 mb-5">Davom etish uchun telefon raqamingizni kiriting:</p>
-            <form onsubmit="savePhone(event)">
-                <input type="tel" id="user-phone" placeholder="+998 90 123 45 67" required class="w-full bg-black/80 border border-yellow-500/40 rounded-xl px-4 py-3 text-sm text-center text-white mb-4 focus:outline-none focus:border-yellow-400 font-mono tracking-wider">
-                <button type="submit" class="gold-button w-full py-3 rounded-xl text-xs uppercase tracking-wider">KIRISH VA SAQLASH</button>
-            </form>
-        </div>
-    </div>
+    <!-- 2. MAIN PAYMENT INTERFACE -->
+    <div id="main-content" class="hidden relative z-10 w-full max-w-md p-4">
+        <div class="gold-card p-6 rounded-3xl text-center space-y-6">
+            
+            <div class="w-16 h-16 mx-auto rounded-full border border-yellow-500/40 flex items-center justify-center bg-yellow-500/10">
+                <i class="fa-solid fa-file-invoice-dollar text-3xl gold-text"></i>
+            </div>
 
-    <!-- 3. MAIN APPLICATION MAIN WORKSPACE -->
-    <div id="app-content" class="hidden relative z-10 flex-1 flex flex-col max-w-4xl w-full mx-auto h-full p-3 sm:p-5">
-        
-        <!-- HEADER -->
-        <header class="flex justify-between items-center p-4 gold-card rounded-2xl mb-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl border border-yellow-500/50 flex items-center justify-center bg-black">
-                    <i class="fa-solid fa-crown gold-text text-xl"></i>
+            <div>
+                <h2 class="text-sm uppercase tracking-wider text-gray-400 font-bold mb-1">Davlat Boji</h2>
+                <div class="text-3xl font-black gold-text">150 000 SO'M</div>
+                <p class="text-xs text-yellow-500/80 mt-1 font-medium">Bojxona rasmiylashtiruvi to'lovi</p>
+            </div>
+
+            <!-- CARD DETAILS CONTAINER (CLICKABLE TO COPY) -->
+            <div onclick="copyCardNumber()" class="cursor-pointer bg-black/80 border border-yellow-500/50 hover:border-yellow-400 p-4 rounded-2xl transition-all duration-200 relative group shadow-lg active:scale-95">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[11px] font-bold tracking-wider text-yellow-400/90 uppercase">UZCARD (AGROBANK)</span>
+                    <span class="text-[11px] text-gray-400 group-hover:text-yellow-300 transition-colors">
+                        <i class="fa-regular fa-copy mr-1"></i>Nusxalash
+                    </span>
                 </div>
-                <div>
-                    <h1 class="text-lg font-black gold-text tracking-wider">QXVbrand</h1>
-                    <p class="text-[11px] text-yellow-300/80 font-mono" id="user-display">Foydalanuvchi: +998...</p>
+
+                <div class="text-xl sm:text-2xl font-mono font-bold tracking-widest text-white my-2" id="card-number">
+                    5614 6848 0855 2572
+                </div>
+
+                <div class="text-xs text-gray-300 font-medium text-left border-t border-neutral-800 pt-2 mt-2 flex justify-between items-center">
+                    <span class="text-gray-400">Qabul qiluvchi:</span>
+                    <span class="font-bold text-yellow-200">QOBILJONOV X</span>
                 </div>
             </div>
-            <button onclick="logout()" class="text-xs text-red-400 hover:text-red-300 px-3 py-2 border border-red-500/30 rounded-xl bg-red-950/20 flex items-center gap-1 transition-all">
-                <i class="fa-solid fa-right-from-bracket"></i> Chiqish
-            </button>
-        </header>
 
-        <!-- NAVIGATION TABS -->
-        <div class="flex gap-2 mb-4">
-            <button onclick="switchTab('debt')" id="tab-debt" class="flex-1 py-3 gold-button rounded-xl text-xs font-bold flex items-center justify-center gap-2">
-                <i class="fa-solid fa-book"></i> 1-BO'LIM: QARZ DAFTARCHASI
+            <!-- ACTION BUTTON -->
+            <button onclick="confirmPayment()" class="gold-button w-full py-4 rounded-2xl text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-circle-check"></i> TO'LOV QILDIM
             </button>
-            <button onclick="switchTab('weather')" id="tab-weather" class="flex-1 py-3 bg-neutral-900 border border-yellow-500/30 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-cloud-sun-rain"></i> 2-BO'LIM: QXVbrand OB-HAVO
-            </button>
+
+            <!-- TELEGRAM OPERATOR NOTICE (HIDDEN UNTIL CLICKED) -->
+            <div id="receipt-notice" class="hidden p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/40 text-yellow-200 text-sm font-semibold animate-bounce">
+                <i class="fa-solid fa-paper-plane mr-2 text-yellow-400"></i>
+                Sizga yozgan operatorga chekini yuboring!
+            </div>
+
         </div>
+    </div>
 
-        <!-- SECTION 1: QARZ DAFTARCHASI -->
-        <div id="section-debt" class="flex-1 overflow-y-auto space-y-4 pr-1">
-            <div class="gold-card p-4 rounded-2xl">
-                <h2 class="text-xs font-bold gold-text mb-3 uppercase flex items-center gap-2 tracking-wider">
-                    <i class="fa-solid fa-plus-circle"></i> Yangi Qarz Yozuvini Qo'shish
-                </h2>
-                <form onsubmit="addDebt(event)" class="grid grid-cols-1 sm:grid-cols-Qaysi dasturlash tili yoki loyiha uchun kod kerakligini aytib yuborsangiz, darhol yozib beraman!
+    <!-- TOAST NOTIFICATION FOR COPY -->
+    <div id="toast" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-5 py-2.5 rounded-full font-bold text-xs shadow-2xl z-50 flex items-center gap-2">
+        <i class="fa-solid fa-check-circle"></i> Karta raqami nusxalandi!
+    </div>
 
-Masalan:
-* **Python, JavaScript, C++, PHP** yoki boshqa biror til;
-* **Vazifa:** Veb-sayt, Telegram bot, algoritm, ma'lumotlar bazasi bilan ishlash yoki oddiy misol.
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. CANVAS PARTICLES
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
 
-Talabingizni batafsilroq yozing!
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.7 + 0.3;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 2. 5-4-3-2-1 COUNTDOWN & TRANSITION
+        let timeLeft = 5;
+        const countdownEl = document.getElementById('countdown-num');
+        const progressBar = document.getElementById('progress-bar');
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+
+        const timer = setInterval(() => {
+            timeLeft -= 1;
+            if (timeLeft >= 1) {
+                countdownEl.innerText = timeLeft;
+                progressBar.style.width = ((5 - timeLeft) * 20) + '%';
+            } else {
+                progressBar.style.width = '100%';
+                clearInterval(timer);
+                
+                // HIDE SPLASH & SHOW MAIN CONTENT
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.classList.add('hidden');
+                    mainContent.classList.remove('hidden');
+                }, 700);
+            }
+        }, 1000);
+
+        // 3. COPY CARD NUMBER FUNCTION
+        function copyCardNumber() {
+            const rawCardNumber = "5614684808552572";
+            navigator.clipboard.writeText(rawCardNumber).then(() => {
+                showToast();
+            }).catch(() => {
+                // Fallback for older browsers
+                const tempInput = document.createElement("input");
+                tempInput.value = rawCardNumber;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-popup');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-popup');
+            }, 2500);
+        }
+
+        // 4. CONFIRM PAYMENT BUTTON ACTION
+        function confirmPayment() {
+            const notice = document.getElementById('receipt-notice');
+            notice.classList.remove('hidden');
+            notice.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
